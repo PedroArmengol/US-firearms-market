@@ -1,0 +1,57 @@
+---
+title: "D3js Visualiation and Proposal Sketch"
+author: "Pedro Armengol"
+date: "27/11/2017"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("extrafont")
+library("ggthemes")
+library("readr")
+library("haven")
+library("dplyr")
+library("tidyr")
+library("stringr")
+library("ggplot2")
+library("plyr")
+library("ggrepel")
+library("grid")
+library("gridExtra")
+library("gdata") 
+library("readxl")
+library("scales")
+library("gtable")
+```
+
+```{r cars}
+setwd("/Users/pedro/Documents/DataVis/Final_Project_D3/license_data")
+
+merchants_state = read.csv("merchants_state.csv")
+
+```
+
+
+```{r pressure, echo=FALSE}
+#PLOT LAT, LONG and Average LONG
+p <- ggplot(merchants_state, aes(lon, lat)) + geom_point(aes(colour = factor(year)))
+p <- p + geom_hline(yintercept=mean(merchants_state$lat[merchants_state$year==2014]), color='red')
+p <- p + geom_hline(yintercept=mean(merchants_state$lat[merchants_state$year==2015]), color='yellow')
+p <- p + geom_hline(yintercept=mean(merchants_state$lat[merchants_state$year==2016]), color='green')
+p <- p +  geom_hline(yintercept=mean(merchants_state$lat[merchants_state$year==2017]), color='blue')
+p
+```
+
+```{r}
+table(merchants_state$year)
+```
+
+## Explanation
+
+I was able to subset the merchants that changed of state between the years of analysis (2014,2015,2016,2017) and follow them. The sample is geographically heterogeneous and stable between years (around 450 observations). In 2014, 2015, 2016 the average latitude decreased; in 2017 it increased in contrast with 2016 but could be attibuted to outliers (armories moving to Alaska).
+
+I'm going to make a dynamic graph using scatterplots over the US map. The graph will depict the movement of the armories and the average latitude for each year.
+
+
