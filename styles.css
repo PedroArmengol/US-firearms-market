@@ -1,0 +1,62 @@
+svg {
+ 	background-color: #f7fcfd;
+}
+
+.point_2014 {
+	fill: #e74c3c;
+}
+
+.point_2015 {
+	fill: #2ecc71;
+}
+
+.point_2016 {
+	fill: #bfc9ca;
+}
+
+.point_2017 {
+	fill: #3498db;
+}
+
+
+#title {
+	font-size: 36px;
+	font-family: Courier New;
+	fill: #8a949e;
+	font-weight: bold;
+}
+
+#subtitle {
+	font-size: 26px;
+	font-family: Courier New;
+	fill: #8a949e;
+}
+
+.legend_label, .axis_label, #caption {
+	font-size: 22px;
+	font-family: Courier New;
+	fill: #1a1a1a;
+	font-weight: bold;
+}
+
+.labels {
+	font-size: 18px;
+	font-family: Courier New;
+	fill: white;
+}
+
+.bar {
+}
+
+.axis text {
+	font-size: 17px;
+	font-family: Courier New;
+}
+
+.axis line {
+	visibility: hidden;
+}
+
+.x_axis_labels {
+	fill: white;
+}
