@@ -59,10 +59,10 @@ function createChart(d){
                       //.filter(function(d) { return d.lon2014>-150 && d.lat2014<60; }) //take out alaska and Hawaii
                       .append("circle")
                       .attr("cx", function(d,i) {
-                          return xScale(d.lon2014);
+                          return xScale(d.lon2015);
                             })
                       .attr("cy",function(d,i){
-                          return yScale(d.lat2014);
+                          return yScale(d.lat2015);
                             })
                       .attr("r", 5);
 
@@ -92,10 +92,10 @@ function createChart(d){
     .transition()
     .duration(2000)
     .attr("cx", function(d,i) {
-      return d.lon2015;
+      return d.lon2016;
     })
     .attr("cy", function(d,i) {
-      return d.lat2015;
+      return d.lat2016;
     })
   });
 
@@ -104,10 +104,10 @@ d3.select("#reset").on("click", function() {
     .transition()
     .duration(2000)
     .attr("cx", function(d,i) {
-      return d.lon2014;
+      return d.lon2015;
     })
     .attr("cy", function(d,i) {
-      return d.lat2014;
+      return d.lat2015;
     })
   });      
          
