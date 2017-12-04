@@ -2,21 +2,7 @@ svg {
  	background-color: #f7fcfd;
 }
 
-.point_2014 {
-	fill: #e74c3c;
-}
 
-.point_2015 {
-	fill: #2ecc71;
-}
-
-.point_2016 {
-	fill: #bfc9ca;
-}
-
-.point_2017 {
-	fill: #3498db;
-}
 
 
 #title {
@@ -33,7 +19,7 @@ svg {
 }
 
 .legend_label, .axis_label, #caption {
-	font-size: 22px;
+	font-size: 18px;
 	font-family: Courier New;
 	fill: #1a1a1a;
 	font-weight: bold;
@@ -43,6 +29,16 @@ svg {
 	font-size: 18px;
 	font-family: Courier New;
 	fill: white;
+}
+
+.text1 {
+    font-size: 36px;
+	font-family: Courier New;
+	fill: gray;
+    stroke: gray;
+    stroke-width: 0.25;
+    opacity: 0.75;
+    font-size: 70px;
 }
 
 .bar {
@@ -59,4 +55,25 @@ svg {
 
 .x_axis_labels {
 	fill: white;
+}
+
+p {
+				font-family: Courier New;
+				font-size: 20px;
+			}
+
+			input[type=radio] {
+				margin-left: 40px;
+			}
+
+button {
+
+
+	color: gray;
+	font-size: 18px;
+	font-family: Courier New;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    font-size: 110%;
+    margin-left: 100px;
 }

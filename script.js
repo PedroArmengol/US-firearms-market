@@ -104,6 +104,13 @@ function createChart(d){
         .attr("transform", "translate(" + (margin.left) + "," + margin.top + ")")
         .call(yAxis);
 
+    //Y axis label
+    svg.append("text")
+        .attr("class", "axis_label")
+        .text("Projected latitude")
+        .attr("transform", "translate("+ margin.left/3 +"," + (margin.top+height/2) + ") rotate(270)")
+        .attr("text-anchor", "middle");
+
     //X axis
     var xAxis = d3.axisBottom()
                   .scale(xScale)
@@ -113,7 +120,41 @@ function createChart(d){
         .attr("class", "axis")
         .attr("transform", "translate(" + margin.left + "," + (margin.top+height - 30) + ")")
         .call(xAxis);
-    
+
+    //X axis label
+    svg.append("text")
+        .attr("class", "axis_label")
+        .text("Projected longitude")
+        .attr("transform", "translate("+ (margin.left + width/2) +"," + (margin.top+height+barPadding*5) + ")")
+        .attr("text-anchor", "middle");
+
+    //Title & Subtitle
+    svg.append("text")
+        .attr("id", "title")
+        .attr("x", margin.left)
+        .attr("y", margin.top/3)
+        .text("Armories that have change of state address");
+
+    svg.append("text")
+        .attr("id", "subtitle")
+        .attr("x", margin.left)
+        .attr("y", margin.top/1.5)
+        .text("Time window: 2014-2017 (considering June as the benchmark)");
+
+    //Caption
+    svg.append("text")
+       .attr("id", "caption")
+       .attr("x", width/2)
+       .attr("y", margin.top+height+margin.bottom - 10)
+       .text("Source:Federal Firearms Licensees (FFLs) published by the ATF")
+       .attr("text-anchor", "middle");
+
+    //Initial Text of year
+    svg.append("text")      
+      .attr("x", margin.left + width - 200)
+      .attr("y", margin.top + height - 200)
+      .text("2014")
+      .attr("class","text1");
     
     //Motion
     d3.select("#start").on("click", function() {
@@ -187,13 +228,50 @@ function createChart(d){
                   .style("opacity", 0.75);
              
           });
+
+        //Update text
+          svg.select("text.text1") 
+             .transition() //transition of place 
+              .duration(4000)
+              .on("start",function() {
+                d3.select(this)           
+                  .attr("x", margin.left + width - 200)
+                  .attr("y", margin.top + height - 200)
+                  .text("2014")
+                  .attr("class","text1")
+                .transition() //transition of place 
+                .delay(600)
+                .duration(4000)
+                  .attr("x", margin.left + width - 200)
+                  .attr("y", margin.top + height - 200)
+                  .text("2015")
+                  .attr("class","text1")
+                .transition() //transition of place 
+                .delay(600)
+                .duration(4000)
+                  .attr("x", margin.left + width - 200)
+                  .attr("y", margin.top + height - 200)
+                  .text("2016")
+                  .attr("class","text1")
+                .transition() //transition of place 
+                .delay(600)
+                .duration(4000)
+                  .attr("x", margin.left + width - 200)
+                  .attr("y", margin.top + height - 200)
+                  .text("2017")
+                  .attr("class","text1");
+             
+          });
+      
       });
 
+
+      //Reset circles
       d3.select("#reset").on("click", function() {
              svg.selectAll("circle")
               .data(dataset)
               .transition() //transition of place 
-               .duration(4000)
+               .duration(500)
                .on("start",function() {
                   d3.select(this)
                     .attr("cx", function(d,i) {
@@ -206,8 +284,22 @@ function createChart(d){
                       .style("fill", "gray")
                       .style("stroke", "gray")
                       .style("stroke-width", 0.25)
-                      .style("opacity", 0.75); });
+                      .style("opacity", 0.75); 
+
+              });
+
+            //Reset text
+             svg.select("text.text1") 
+             .transition() //transition of place 
+              .duration(4000)
+              .on("start",function() {
+                d3.select(this)           
+                  .attr("x", margin.left + width - 200)
+                  .attr("y", margin.top + height - 200)
+                  .text("2014")
+                  .attr("class","text1")
   
              });
-
+        });      
+  
 };     
