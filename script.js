@@ -53,16 +53,15 @@ function createChart(d){
                    .range([0, width]);
 
         //Draw the scatter plot
-            var armories = svg.selectAll("circle")
-                      .data(dataset,key)
+                    svg.selectAll("circle")
+                      .data(dataset)
                       .enter()
-                      //.filter(function(d) { return d.lon2014>-150 && d.lat2014<60; }) //take out alaska and Hawaii
                       .append("circle")
-                      .attr("cx", function(d,i) {
-                          return xScale(d.lon2015);
+                      .attr("cx", function(d) {
+                          return xScale(d.lon2014);
                             })
-                      .attr("cy",function(d,i){
-                          return yScale(d.lat2015);
+                      .attr("cy",function(d){
+                          return yScale(d.lat2014);
                             })
                       .attr("r", 5);
 
@@ -86,29 +85,75 @@ function createChart(d){
         .attr("transform", "translate(" + margin.left + "," + (margin.top+height - 30) + ")")
         .call(xAxis);
     
-    //MOTION
+    
+    //TRANSITION OF ARMORIES
     d3.select("#start").on("click", function() {
-  armories
-    .transition()
-    .duration(2000)
-    .attr("cx", function(d,i) {
-      return d.lon2016;
-    })
-    .attr("cy", function(d,i) {
-      return d.lat2016;
-    })
-  });
+          //Update scale domains
+          yScale.domain([d3.min(dataset, function (d){return d.lat2015;}), d3.max(dataset, function (d){return d.lat2015;})]);
+          xScale.domain([d3.min(dataset, function (d){return d.lon2015;}), d3.max(dataset, function (d){return d.lon2015;})]);
 
-d3.select("#reset").on("click", function() {
-  armories
-    .transition()
-    .duration(2000)
-    .attr("cx", function(d,i) {
-      return d.lon2015;
-    })
-    .attr("cy", function(d,i) {
-      return d.lat2015;
-    })
-  });      
-         
-};
+          //Update all circles
+          svg.selectAll("circle")
+             .data(dataset)
+             .transition() //transition of place 
+               .duration(2000)
+               .on("start",function() {
+                  d3.select(this)
+                    .attr("fill","black")
+                    .attr("r",5);
+                })
+                .attr("cx", function(d) {
+                    return xScale(d.lon2015);
+                 })
+                .attr("cy", function(d) {
+                return yScale(d.lat2015);
+                  })
+              .transition() //transition of place 
+              .duration(2000)
+              .on("start",function() {
+                  d3.select(this)
+                    .attr("fill","black")
+                    .attr("r",5);
+                })
+                .attr("cx", function(d) {
+                    return xScale(d.lon2016);
+                 })
+                .attr("cy", function(d) {
+                return yScale(d.lat2016);
+                })
+              .transition() //transition of place 
+              .duration(2000)
+              .on("start",function() {
+                  d3.select(this)
+                    .attr("fill","black")
+                    .attr("r",5);
+                })
+                .attr("cx", function(d) {
+                    return xScale(d.lon2017);
+                 })
+                .attr("cy", function(d) {
+                return yScale(d.lat2017);
+                });
+             
+          });
+
+      d3.select("#reset").on("click", function() {
+             svg.selectAll("circle")
+              .data(dataset)
+              .transition() //transition of place 
+               .duration(1000)
+               .on("start",function() {
+                  d3.select(this)
+                    .attr("fill","black")
+                    .attr("r",5);
+                })
+                .attr("cx", function(d) {
+                    return xScale(d.lon2014);
+                 })
+                .attr("cy", function(d) {
+                return yScale(d.lat2014);
+                 });
+  
+    });
+
+};     
