@@ -28,10 +28,35 @@ d3.csv("merchants_state_wide.csv", function(error, data){
   };
 });
 
+
+//Canvas
 var svg = d3.select("body")
               .append("svg")
               .attr("height", height + margin.top + margin.bottom)
               .attr("width", width + margin.left + margin.right);
+
+
+//Define map projection
+      var projection = d3.geoAlbersUsa()
+                 .translate([width/2, height/2])
+                 .scale([900]);
+
+      //Define path generator
+      var path = d3.geoPath()
+               .projection(projection);
+
+//Load in GeoJSON data of US states
+      d3.json("us-states.json", function(json) {
+        
+        //Bind data and create one path per GeoJSON feature
+        svg.selectAll("path")
+           .data(json.features)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("fill","lightblue");
+
+         });
 
 //Graph
 function createChart(d){
@@ -44,12 +69,12 @@ function createChart(d){
 
   //Y Scale (continuous)
     var yScale = d3.scaleLinear()
-                   .domain([d3.min(dataset, function (d){return d.lat2015;}), d3.max(dataset, function (d){return d.lat2015;})])
+                   .domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];})])
                    .range([height,0]); 
 
     //X scale (categorical)
     var xScale = d3.scaleLinear()
-                   .domain([d3.min(dataset, function (d){return d.lon2015;}), d3.max(dataset, function (d){return d.lon2015;})])
+                   .domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];})])
                    .range([0, width]);
 
         //Draw the scatter plot
@@ -58,12 +83,16 @@ function createChart(d){
                       .enter()
                       .append("circle")
                       .attr("cx", function(d) {
-                          return xScale(d.lon2014);
-                            })
-                      .attr("cy",function(d){
-                          return yScale(d.lat2014);
-                            })
-                      .attr("r", 5);
+                            return projection([d.lon2014, d.lat2014])[0];
+                                })
+                      .attr("cy", function(d) {
+                            return projection([d.lon2014, d.lat2014])[1];
+                                })
+                      .attr("r", 5)
+                      .style("fill", "yellow")
+                      .style("stroke", "gray")
+                      .style("stroke-width", 0.25)
+                      .style("opacity", 0.75);
 
     //Y axis
     var yAxis = d3.axisLeft()
@@ -86,11 +115,11 @@ function createChart(d){
         .call(xAxis);
     
     
-    //TRANSITION OF ARMORIES
+    //Motion
     d3.select("#start").on("click", function() {
           //Update scale domains
-          yScale.domain([d3.min(dataset, function (d){return d.lat2015;}), d3.max(dataset, function (d){return d.lat2015;})]);
-          xScale.domain([d3.min(dataset, function (d){return d.lon2015;}), d3.max(dataset, function (d){return d.lon2015;})]);
+          yScale.domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];})]);
+          xScale.domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];})]);
 
           //Update all circles
           svg.selectAll("circle")
@@ -99,41 +128,47 @@ function createChart(d){
                .duration(2000)
                .on("start",function() {
                   d3.select(this)
-                    .attr("fill","black")
-                    .attr("r",5);
-                })
-                .attr("cx", function(d) {
-                    return xScale(d.lon2015);
-                 })
-                .attr("cy", function(d) {
-                return yScale(d.lat2015);
-                  })
+                    .attr("cx", function(d) {
+                            return projection([d.lon2015, d.lat2015])[0];
+                                })
+                      .attr("cy", function(d) {
+                            return projection([d.lon2015, d.lat2015])[1];
+                                })
+                      .attr("r", 5)
+                      .style("fill", "yellow")
+                      .style("stroke", "gray")
+                      .style("stroke-width", 0.25)
+                      .style("opacity", 0.75); })
               .transition() //transition of place 
               .duration(2000)
               .on("start",function() {
                   d3.select(this)
-                    .attr("fill","black")
-                    .attr("r",5);
-                })
-                .attr("cx", function(d) {
-                    return xScale(d.lon2016);
-                 })
-                .attr("cy", function(d) {
-                return yScale(d.lat2016);
-                })
+                    .attr("cx", function(d) {
+                            return projection([d.lon2016, d.lat2016])[0];
+                                })
+                      .attr("cy", function(d) {
+                            return projection([d.lon2016, d.lat2016])[1];
+                                })
+                      .attr("r", 5)
+                      .style("fill", "yellow")
+                      .style("stroke", "gray")
+                      .style("stroke-width", 0.25)
+                      .style("opacity", 0.75); })
               .transition() //transition of place 
               .duration(2000)
               .on("start",function() {
                   d3.select(this)
-                    .attr("fill","black")
-                    .attr("r",5);
-                })
-                .attr("cx", function(d) {
-                    return xScale(d.lon2017);
-                 })
-                .attr("cy", function(d) {
-                return yScale(d.lat2017);
-                });
+                    .attr("cx", function(d) {
+                            return projection([d.lon2017, d.lat2017])[0];
+                                })
+                      .attr("cy", function(d) {
+                            return projection([d.lon2017, d.lat2017])[1];
+                                })
+                      .attr("r", 5)
+                      .style("fill", "yellow")
+                      .style("stroke", "gray")
+                      .style("stroke-width", 0.25)
+                      .style("opacity", 0.75); });
              
           });
 
@@ -144,16 +179,18 @@ function createChart(d){
                .duration(1000)
                .on("start",function() {
                   d3.select(this)
-                    .attr("fill","black")
-                    .attr("r",5);
-                })
-                .attr("cx", function(d) {
-                    return xScale(d.lon2014);
-                 })
-                .attr("cy", function(d) {
-                return yScale(d.lat2014);
-                 });
+                    .attr("cx", function(d) {
+                            return projection([d.lon2014, d.lat2014])[0];
+                                })
+                      .attr("cy", function(d) {
+                            return projection([d.lon2014, d.lat2014])[1];
+                                })
+                      .attr("r", 5)
+                      .style("fill", "yellow")
+                      .style("stroke", "gray")
+                      .style("stroke-width", 0.25)
+                      .style("opacity", 0.75); });
   
-    });
+             });
 
 };     
