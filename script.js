@@ -69,27 +69,27 @@ function createChart(d){
 
   //Y Scale (continuous)
     var yScale = d3.scaleLinear()
-                   .domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];})])
+                   .domain([d3.min(dataset, function (d){return projection([d.lon2014, d.lat2014])[1];}), d3.max(dataset, function (d){return projection([d.lon2014, d.lat2014])[1];})])
                    .range([height,0]); 
 
     //X scale (categorical)
     var xScale = d3.scaleLinear()
-                   .domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];})])
+                   .domain([d3.min(dataset, function (d){return projection([d.lon2014, d.lat2014])[0];}), d3.max(dataset, function (d){return projection([d.lon2014, d.lat2014])[0];})])
                    .range([0, width]);
 
         //Draw the scatter plot
                     svg.selectAll("circle")
-                      .data(dataset)
+                      .data(dataset, key)
                       .enter()
                       .append("circle")
-                      .attr("cx", function(d) {
+                      .attr("cx", function(d,i) {
                             return projection([d.lon2014, d.lat2014])[0];
                                 })
-                      .attr("cy", function(d) {
+                      .attr("cy", function(d,i) {
                             return projection([d.lon2014, d.lat2014])[1];
                                 })
                       .attr("r", 5)
-                      .style("fill", "yellow")
+                      .style("fill", "gray")
                       .style("stroke", "gray")
                       .style("stroke-width", 0.25)
                       .style("opacity", 0.75);
@@ -125,68 +125,85 @@ function createChart(d){
           svg.selectAll("circle")
              .data(dataset)
              .transition() //transition of place 
-               .duration(2000)
-               .on("start",function() {
-                  d3.select(this)
-                    .attr("cx", function(d) {
-                            return projection([d.lon2015, d.lat2015])[0];
-                                })
-                      .attr("cy", function(d) {
-                            return projection([d.lon2015, d.lat2015])[1];
-                                })
-                      .attr("r", 5)
-                      .style("fill", "yellow")
-                      .style("stroke", "gray")
-                      .style("stroke-width", 0.25)
-                      .style("opacity", 0.75); })
-              .transition() //transition of place 
-              .duration(2000)
+              .duration(4000)
+              .ease(d3.easeLinear)
               .on("start",function() {
                   d3.select(this)
-                    .attr("cx", function(d) {
-                            return projection([d.lon2016, d.lat2016])[0];
+                      .attr("cx", function(d,i) {
+                            return projection([d.lon2014, d.lat2014])[0];
                                 })
-                      .attr("cy", function(d) {
-                            return projection([d.lon2016, d.lat2016])[1];
+                      .attr("cy", function(d,i) {
+                            return projection([d.lon2014, d.lat2014])[1];
                                 })
                       .attr("r", 5)
-                      .style("fill", "yellow")
+                      .style("fill", "gray")
                       .style("stroke", "gray")
                       .style("stroke-width", 0.25)
-                      .style("opacity", 0.75); })
+                      .style("opacity", 0.75)
               .transition() //transition of place 
-              .duration(2000)
-              .on("start",function() {
-                  d3.select(this)
-                    .attr("cx", function(d) {
-                            return projection([d.lon2017, d.lat2017])[0];
-                                })
-                      .attr("cy", function(d) {
-                            return projection([d.lon2017, d.lat2017])[1];
-                                })
-                      .attr("r", 5)
-                      .style("fill", "yellow")
-                      .style("stroke", "gray")
-                      .style("stroke-width", 0.25)
-                      .style("opacity", 0.75); });
+              .delay(800)
+              .duration(4000)
+                  .ease(d3.easeLinear)
+                  .attr("cx", function(d,i) {
+                    return projection([d.lon2015, d.lat2015])[0];
+                        })
+                  .attr("cy", function(d,i) {
+                    return projection([d.lon2015, d.lat2015])[1];
+                        })
+                  .attr("r", 5)
+                  .style("fill", "gray")
+                  .style("stroke", "gray")
+                  .style("stroke-width", 0.25)
+                  .style("opacity", 0.75)
+              .transition() //transition of place 
+              .delay(800)
+              .duration(4000)
+                  .ease(d3.easeLinear)
+                  .attr("cx", function(d,i) {
+                    return projection([d.lon2016, d.lat2016])[0];
+                        })
+                  .attr("cy", function(d,i) {
+                    return projection([d.lon2016, d.lat2016])[1];
+                        })
+                  .attr("r", 5)
+                  .style("fill", "gray")
+                  .style("stroke", "gray")
+                  .style("stroke-width", 0.25)
+                  .style("opacity", 0.75)
+              .transition() //transition of place 
+              .delay(800)
+              .duration(4000)
+                  .ease(d3.easeLinear)
+                  .attr("cx", function(d,i) {
+                    return projection([d.lon2017, d.lat2017])[0];
+                      })
+                  .attr("cy", function(d,i) {
+                    return projection([d.lon2017, d.lat2017])[1];
+                      })
+                  .attr("r", 5)
+                  .style("fill", "gray")
+                  .style("stroke", "gray")
+                  .style("stroke-width", 0.25)
+                  .style("opacity", 0.75);
              
           });
+      });
 
       d3.select("#reset").on("click", function() {
              svg.selectAll("circle")
               .data(dataset)
               .transition() //transition of place 
-               .duration(1000)
+               .duration(4000)
                .on("start",function() {
                   d3.select(this)
-                    .attr("cx", function(d) {
+                    .attr("cx", function(d,i) {
                             return projection([d.lon2014, d.lat2014])[0];
                                 })
-                      .attr("cy", function(d) {
+                      .attr("cy", function(d,i) {
                             return projection([d.lon2014, d.lat2014])[1];
                                 })
                       .attr("r", 5)
-                      .style("fill", "yellow")
+                      .style("fill", "gray")
                       .style("stroke", "gray")
                       .style("stroke-width", 0.25)
                       .style("opacity", 0.75); });
