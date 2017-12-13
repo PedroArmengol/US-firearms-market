@@ -23,7 +23,6 @@ d3.csv("merchants_state_wide.csv", function(error, data){
       d.name = d.License_Name;
     });
     dataset = data;
-    console.log(dataset);
     createChart(dataset);
 
   };
@@ -158,84 +157,13 @@ function createChart(d) {
       .text("2014")
       .attr("class","text1");
   
-
-    d3.selectAll("input")
-        .on("click", function() {
-
-          var view = d3.select(this).node().value;
-
-          //Reset all to black
-          allcircles.attr("r", 5);
-
-
-          switch (view) {
-
-            case "dealer":
-
-                    allcircles.filter(function(d,i) {
-                                return d.lic_type == 1;
-                              })
-                              .attr("r", 20);
-                                        
-
-              break;
-
-
-            case "pawnbroker":
-
-              allcircles.filter(function(d,i) {
-                                return d.lic_type == 2;
-                              })
-                        .attr("r", 20);
-                        
-                        
-
-
-              break;
-
-            case "manufacturer_firearms":
-
-              allcircles.filter(function(d,i) {
-                                return d.lic_type == 7;
-                              })
-                        .attr("r", 20);
-                        
-                        
-
-
-              break;
-
-            case "manufacturer_ammunition":
-
-              console.log("hello")
-              allcircles.filter(function(d,i) {
-                                return d.lic_type == 6;
-                              })
-                        .attr("r", 20);
-
-              break;
-
-            case "All":
-            default:
- 
-          }
-
-        });
-    };
-  
-
-
-
-
-
-
-function motion(dataset) { 
+     //Function of Motion 
+      function motion(dataset,view) { 
     //Motion
     d3.select("#start").on("click", function() {
           //Update scale domains
           yScale.domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];})]);
           xScale.domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[0];})]);
-
           //Update all circles
           svg.selectAll("circle")
              .data(dataset)
@@ -250,7 +178,23 @@ function motion(dataset) {
                     return projection([d.lon2015, d.lat2015])[1];
                         })
                   .attr("r", 5)
-                  .style("fill", "gray")
+                  .style("fill", function(d) {
+                        if (view == "all") {
+                          return "grey"
+                        }
+                        else if (d.lic_type == 1) {
+                          return "red";
+                        }
+                        else if (d.lic_type == 2) {
+                          return "green";
+                        }
+                        else if (d.lic_type == 7) {
+                          return "yellow";
+                        }
+                        else if (d.lic_type == 6) {
+                          return "brown";
+                        }
+                      })
                   .style("stroke", "gray")
                   .style("stroke-width", 0.25)
                   .style("opacity", 0.75)
@@ -265,7 +209,23 @@ function motion(dataset) {
                     return projection([d.lon2016, d.lat2016])[1];
                         })
                   .attr("r", 5)
-                  .style("fill", "gray")
+                  .style("fill", function(d) {
+                        if (view == "all") {
+                          return "grey"
+                        }
+                        else if (d.lic_type == 1) {
+                          return "red";
+                        }
+                        else if (d.lic_type == 2) {
+                          return "green";
+                        }
+                        else if (d.lic_type == 7) {
+                          return "yellow";
+                        }
+                        else if (d.lic_type == 6) {
+                          return "brown";
+                        }
+                      })
                   .style("stroke", "gray")
                   .style("stroke-width", 0.25)
                   .style("opacity", 0.75)
@@ -280,7 +240,23 @@ function motion(dataset) {
                     return projection([d.lon2017, d.lat2017])[1];
                       })
                   .attr("r", 5)
-                  .style("fill", "gray")
+                  .style("fill", function(d) {
+                        if (view == "all") {
+                          return "grey"
+                        }
+                        else if (d.lic_type == 1) {
+                          return "red";
+                        }
+                        else if (d.lic_type == 2) {
+                          return "green";
+                        }
+                        else if (d.lic_type == 7) {
+                          return "yellow";
+                        }
+                        else if (d.lic_type == 6) {
+                          return "brown";
+                        }
+                      })
                   .style("stroke", "gray")
                   .style("stroke-width", 0.25)
                   .style("opacity", 0.75);
@@ -344,3 +320,89 @@ function motion(dataset) {
 
     };
     
+   //Select just the type of licenses of Interest
+
+    d3.selectAll("input")
+        .on("click", function() {
+
+          var view = d3.select(this).node().value;
+
+          //Reset to motion with all the sample
+          motion(dataset,"all");
+
+
+          switch (view) {
+
+            case "dealer":
+                    dataset1 = dataset.filter(function (d, i) {
+                                      return d.lic_type == 1 
+                                        
+                                    });
+                  
+                    motion(dataset1,view);
+                                        
+
+              break;
+
+
+            case "pawnbroker":
+
+              dataset2 = dataset.filter(function (d, i) {
+
+                          return d.lic_type == 2 
+                                        
+                              });
+
+          
+              motion(dataset2,view);
+                        
+
+
+              break;
+
+            case "manufacturer_firearms":
+
+            dataset3 = dataset.filter(function (d, i) {
+                        
+                        return d.lic_type == 7 
+                                        
+                            });
+
+                        
+              motion(dataset3,view);      
+
+
+              break;
+
+            case "manufacturer_ammunition":
+
+
+              dataset4 = dataset.filter(function (d, i) {
+                        
+                        return d.lic_type == 6 
+                                        
+                            });
+
+                        
+              motion(dataset4,view);  
+
+              break;
+
+            case "all":
+
+              motion(dataset,view); 
+            
+              break;
+ 
+          }
+
+        });
+    };
+  
+
+
+
+
+
+
+
