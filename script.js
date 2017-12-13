@@ -79,7 +79,7 @@ function createChart(d) {
                    .range([0, width]);
 
         //Draw the scatter plot
-                  allcircles = svg.selectAll("circle")
+                  svg.selectAll("circle")
                       .data(dataset, key)
                       .enter()
                       .append("circle")
@@ -159,7 +159,7 @@ function createChart(d) {
   
      //Function of Motion 
       function motion(dataset,view) { 
-    //Motion
+
     d3.select("#start").on("click", function() {
           //Update scale domains
           yScale.domain([d3.min(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];}), d3.max(dataset, function (d){return projection([d.lon2015, d.lat2015])[1];})]);
