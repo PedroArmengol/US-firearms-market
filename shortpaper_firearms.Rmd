@@ -1,0 +1,393 @@
+---
+title: "Firearms smuggling from the US to Mexico"
+author: "Pedro Armengol"
+date: "12/13/2017"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("mxmaps") 
+library("maptools")
+library("stringr")
+library("devtools")
+library("extrafont")
+library("ggthemes")
+library("readr")
+library("haven")
+library("dplyr")
+library("tidyr")
+library("stringr")
+library("ggplot2")
+library("plyr")
+library("ggrepel")
+library("grid")
+library("gridExtra")
+library("gdata") 
+library("readxl")
+library("scales")
+library("gtable")
+library("ggmap")
+
+```
+
+
+
+```{r graph1, include=FALSE}
+#Graph 1
+#Firearms manufactured
+firearms <- read_excel("/Users/pedro/Documents/DataVis/ATF/atf_production.xlsx") 
+firearms_long <- gather(firearms,ao, Total,"1986":"2015", factor_key=TRUE) 
+names(firearms_long)[names(firearms_long) == 'Year'] <- 'type' 
+names(firearms_long)[names(firearms_long) == 'ao'] <- 'year'
+firearms_long$year <- as.numeric(firearms_long$year) + 1985
+firearms_long$Total <- firearms_long$Total/1000000
+fill1 = economist_pal()(6)
+
+g1 <- ggplot(subset(firearms_long, type != "Total"), aes(x = year, y = Total, fill=type))
+g1 <- g1 + geom_bar(stat = "identity", position = "stack")
+g1 <- g1 + labs(x="", 
+                y="",
+                title="Firearms manufacture by type",
+                subtitle="Firearms production in the US *millions",
+                caption = "Source: ATF data: U.S Firearms Commerce Report")
+g1 <- g1 + theme(plot.title=element_text(size=17, hjust=0.0, face="bold", colour="black", vjust=-1))
+g1 <- g1 + theme(plot.subtitle=element_text(size=13, hjust=0.0, face="italic", color="maroon"))
+g1 <- g1 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black"))
+g1 <- g1 + theme(axis.title.y = element_text(size=7, hjust=0.5,angle=90,face="bold")) 
+g1 <- g1 + theme(axis.title.x = element_text(size=7, hjust=1.0,angle=180,face="bold"))
+g1 <- g1 + theme(legend.position="bottom", legend.direction="horizontal", legend.title = element_blank())
+g1 <- g1 + scale_x_continuous(breaks = seq(1986,2015,4))
+g1 <- g1 + guides(color=guide_legend(""))
+g1 <- g1 + scale_colour_economist()
+g1 <- g1 + scale_fill_manual("", values = fill1)
+```
+
+```{r graph2, include=FALSE}
+#Graph 2
+#Speaking about trade deficits
+firearms <- read_csv("/Users/pedro/Documents/DataVis/ATF/atf_columns.csv") 
+firearms <- subset(firearms, year != 2016)
+firearms$export <- firearms$export/1000000
+firearms$imports <- firearms$imports/1000000
+fill2 = economist_pal()(2)
+
+
+g2 <- ggplot(firearms, aes(year)) 
+g2 <- g2 + geom_line(aes(y = imports, colour = "Imports"), size = 1)
+g2 <- g2 + geom_line(aes(y = export, colour = "Exports"), size = 1)
+g2 <- g2 + labs(x="", 
+                 y="",
+                 title="Trade deficit in the US firearm production",
+                 subtitle="Firearms imports/exports in the US *millions",
+                 caption = "Source: ATF data: U.S Firearms Commerce Report")
+##g2 <- g2 + theme_economist()
+g2 <- g2 + theme(plot.title=element_text(size=17, hjust=0.0, face="bold", colour="black", vjust=-1))
+g2 <- g2 + theme(plot.subtitle=element_text(size=13, hjust=0.0, face="italic", color="maroon"))
+g2 <- g2 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black"))
+g2 <- g2 + theme(axis.title.y = element_text(size=7, hjust=0.5,angle=90,face="bold")) 
+g2 <- g2 + theme(axis.title.x = element_text(size=7, hjust=1.0,angle=180,face="bold")) 
+g2 <- g2 + scale_x_continuous(breaks = seq(1986,2015,4))
+g2 <- g2 + scale_colour_manual("", 
+                    breaks = c("Imports", "Exports"),
+                    values = fill2)
+g2 <- g2 + guides(color=guide_legend(""))
+g2
+
+```
+
+```{r graph3, include=FALSE}
+#Graph 3
+#Consolidation of armories in the US
+firearms <- read_csv("/Users/pedro/Documents/DataVis/ATF/atf_columns.csv") 
+firearms$licenses <- round(firearms$licenses/1000, digits = 1)
+fill3 = economist_pal()(1)
+
+g3 <- ggplot(firearms,aes(y = licenses, x = year))
+g3 <- g3 + geom_area(fill = fill3,stat="identity", alpha =0.7)
+g3 <- g3 + labs(x="", 
+                 y="",
+                 title="Consolidation of armories in the US",
+                 subtitle="Number of licenses for firearms production*  '000",
+                 caption = "Source: ATF data: U.S Firearms Commerce Report                *Production, imports and exports")
+##g3 <- g3 + theme_economist()
+g3 <- g3 + theme(plot.title=element_text(size=17, hjust=0.0, face="bold", colour="black", vjust=-1))
+g3 <- g3 + theme(plot.subtitle=element_text(size=13, hjust=0.0, face="italic", color="maroon"))
+g3 <- g3 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black"))
+g3 <- g3 + theme(axis.title.y = element_text(size=7, hjust=0.5,angle=90,face="bold")) 
+g3 <- g3 + theme(axis.title.x = element_text(size=7, hjust=1.0,angle=180,face="bold")) 
+g3 <- g3 + scale_x_continuous(breaks = seq(1986,2015,4))
+g3 <- g3 + guides(color=guide_legend(""))
+g3
+
+```
+
+```{r graph4, include=FALSE}
+#Graph 4
+#Correlation between FAWB and Murders in Mexico
+crimes <- read_excel("/Users/pedro/Documents/DataVis/SESNSP/crimen.xls")
+crimes <- subset(crimes, ANO != 2017 & MODALIDAD == "HOMICIDIOS" & TIPO == "DOLOSOS" & SUBTIPO == "CON ARMA DE FUEGO")
+crimes$Murders <- rowSums(crimes[,7:18])
+#Subset by the neighbour states: Baja California, Sonora, Chihuahua, Coahuila, Nuevo Leon, Tamaulipas
+crimes <- subset(crimes, ENTIDAD == "BAJA CALIFORNIA" | ENTIDAD == "SONORA" | ENTIDAD == "CHIHUAHUA" | ENTIDAD == "COAHUILA" | ENTIDAD == "NUEVO LEON" | ENTIDAD == "TAMAULIPAS")
+g4 <- ggplot(crimes, aes(ANO, ENTIDAD))  
+g4 <- g4 + geom_tile(aes(fill = Murders), colour = "white")
+g4 <- g4 + scale_fill_gradient(low = "white", high = "orangered3")
+g4 <- g4 + geom_vline(xintercept = 2004, size = 1, colour = "steelblue")
+g4 <- g4 + geom_text(aes(x=2004, label="Federal Assault Weapons Ban Finishes", y = "NUEVO LEON"), colour="steelblue", angle=90, vjust = 1.2, text=element_text(size=12))
+g4 <- g4 + labs(x="Year", 
+                y="State",
+                title="Correlation between FAWB and Murders in Mexico",
+                subtitle="Number of yearly firearm murders in the Mexico's neighbour states with the US ",
+                caption = "Source: SESNSP (Executive Secretariat of the Public Security Council: Mexico)")
+g4 <- g4 + theme(plot.title=element_text(size=15, hjust=0.0, face="bold", colour="black", vjust=-1))
+g4 <- g4 + theme(plot.subtitle=element_text(size=10, hjust=0.0, face="italic", color="maroon"))
+g4 <- g4 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black")) 
+g4 <- g4 + theme(axis.title.y = element_text(size=11, hjust=0.5,angle=90,face="bold")) 
+g4 <- g4 + theme(axis.title.x = element_text(size=11, hjust=0.5,angle=0,face="bold")) 
+g4
+```
+
+```{r graph5, include=FALSE}
+#Graph 5 
+#Trend: murders with firearm in Mexico & Rifle production in the US
+#Crimes (murders with firearm)
+crimes_agg <- crimes  %>%
+  dplyr::group_by(ANO) %>%
+  dplyr::summarize(total = sum(Murders)) 
+#Crimes (murders in general)
+crimes1 <- read_excel("/Users/pedro/Documents/DataVis/SESNSP/crimen.xls")
+crimes1 <- subset(crimes1, ANO != 2017 & ANO != 2016 & MODALIDAD == "HOMICIDIOS" & TIPO == "DOLOSOS" )
+crimes1$Murders <- rowSums(crimes1[,7:18])
+crimes_agg1 <- crimes1  %>%
+  dplyr::group_by(ANO) %>%
+  dplyr::summarize(total = sum(Murders)) 
+fill5 = economist_pal()(2)
+
+p1 <- ggplot(subset(crimes_agg,ANO!=2016), aes(ANO)) 
+p1 <- p1 + geom_line(aes(y = crimes_agg1$total), size =1,show.legend=FALSE)
+p1 <- p1 + labs(x="", 
+                y="Murders",
+                title="",
+                subtitle="",
+                caption = "Source: ATF and SESNSP (Executive Secretariat of the Public Security Council: Mexico)")
+##p1 <- p1 + theme_economist()
+p1 <- p1 + theme(plot.title=element_text(size=17, hjust=0.0, face="bold", colour="black", vjust=-1))
+p1 <- p1 + theme(plot.subtitle=element_text(size=13, hjust=0.0, face="italic", color="maroon"))
+p1 <- p1 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black"))
+p1 <- p1 + theme(axis.title.y = element_text(size=7, hjust=0.5,angle=90,face="bold")) 
+p1 <- p1 + theme(axis.title.x = element_text(size=7, hjust=1.0,angle=180,face="bold")) 
+p1 <- p1 + scale_x_continuous(breaks = seq(1997,2015,4))
+
+#Guns
+firearms_agg = subset(firearms_long, type == "Rifles" & year > 1996)
+firearms_agg$Total = firearms_agg$Total*1000
+
+p2 <- ggplot(firearms_agg, aes(year,Total))
+p2 <- p2 + geom_line(aes(),color = "#014d64", size =1,show.legend=FALSE)
+p2 <- p2 + labs(x="", 
+                y="Rifle production '000",
+                title="",
+                subtitle="Rifles production '000 (US) and Murders (Mexico)",
+                caption = "")
+#p2 <- p2 + theme_economist()
+p2 <- p2 + theme(plot.title=element_text(size=17, hjust=0.0, face="bold", colour="black", vjust=-1))
+p2 <- p2 + theme(plot.subtitle=element_text(size=13, hjust=0.0, face="italic", color="maroon"))
+p2 <- p2 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black"))
+p2 <- p2 + theme(axis.title.y = element_text(size=7, hjust=0.5,angle=90,face="bold")) 
+p2 <- p2 + theme(axis.title.x = element_text(size=7, hjust=1.0,angle=180,face="bold")) 
+p2 <- p2 + scale_x_continuous(breaks = seq(1997,2015,4))
+
+
+gp1<- ggplot_gtable(ggplot_build(p1))
+gp2<- ggplot_gtable(ggplot_build(p2))
+maxWidth = unit.pmax(gp1$widths[2:3], gp2$widths[2:3])
+gp1$widths[2:3] <- maxWidth
+gp2$widths[2:3] <- maxWidth
+grid.arrange(gp2, gp1)
+
+```
+
+```{r graph6, include=FALSE}
+#Graph 6 
+#Tight legislation
+#Number of recent law modifications per State
+legis <- read_excel("/Users/pedro/Documents/DataVis/SFL/sfl_db.xls")
+legis <- subset(legis, year != 2017)
+legis$total <- rowSums(legis[,3:136])
+legis_agg <- legis  %>%
+  dplyr::group_by(state) %>%
+  dplyr::summarize(total = sum(total)) 
+legis_agg$state <- tolower(legis_agg$state)
+#Dataframe states
+states <- map_data("state")
+names(states)[names(states)=="region"] <- "state"
+#Analysis of comun observations
+unique(states$state)
+unique(legis_agg$state)
+elem1 <-  unique(states$state)[unique(states$state) %in% unique(legis_agg$state) == FALSE]
+#Fix tables
+states <- subset(states, state != "district of columbia")
+legis_agg <- subset(legis_agg, state != "alaska" | state != "hawaii")
+#Merge
+legis_map <- merge(legis_agg, states, by = c("state"))
+#Map
+g6 <- ggplot(data = legis_map)  
+g6 <- g6 + geom_polygon(aes(x = long, y = lat, fill = total, group = group))  
+g6 <- g6 + coord_fixed(1.3)
+g6 <- g6 + labs(x="", 
+                y="",
+                title="Number of legislation pieces by State in the US",
+                subtitle="Number of state firearms laws 1991-2016",
+                caption = "Source: State Firearm Law Database")
+g6 <- g6 + theme(plot.title=element_text(size=15, hjust=0.0, face="bold", colour="black", vjust=-1))
+g6 <- g6 + theme(plot.subtitle=element_text(size=10, hjust=0.0, face="italic", color="maroon"))
+g6 <- g6 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black")) 
+g6 <- g6 + theme(axis.title.y = element_text(size=11, hjust=0.5,angle=90,face="bold")) 
+g6 <- g6 + theme(axis.title.x = element_text(size=11, hjust=0.5,angle=0,face="bold"))
+g6 <- g6 + theme(
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.text = element_blank()
+)
+g6 <- g6 + scale_fill_gradient(low = "white", high = "deepskyblue4") ####Fill colors of the map
+g6 <- g6 + theme(panel.background = element_rect(fill = 'white', colour = 'white'))
+g6 <- g6 + guides(fill=guide_legend(title=""))
+g6
+```
+
+```{r graph7, include=FALSE}
+#Graph 7
+#Correlation between number of licenses and firearms laws for each state
+licenses_state <- read_csv("/Users/pedro/Documents/DataVis/ATF/license_state.csv")
+names(licenses_state)[names(licenses_state)=="State"] <- "state"
+licenses_state$state <- tolower(licenses_state$state)
+#merge licenses and laws
+legis_licenses <- merge(legis_agg, licenses_state, by = c("state"))
+g7 <- ggplot(legis_licenses, aes(FFL_Population,total))
+g7 <- g7 + geom_point(colour = "blue", size = 3)
+g7 <- g7 + labs(x="Number of licenses", 
+                y="Number of laws",
+                title="Number of legislation pieces and firearms licenses",
+                subtitle="Number of state firearms laws 1991-2016 and number of licenses per state (2016) ",
+                caption = "Source: State Firearm Law Database and ATF")
+g7 <- g7 + theme(plot.title=element_text(size=15, hjust=0.0, face="bold", colour="black", vjust=-1))
+g7 <- g7 + theme(plot.subtitle=element_text(size=10, hjust=0.0, face="italic", color="maroon"))
+g7 <- g7 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black")) 
+g7 <- g7 + theme(axis.title.y = element_text(size=11, hjust=0.5,angle=90,face="bold")) 
+g7 <- g7 + theme(axis.title.x = element_text(size=11, hjust=0.5,angle=0,face="bold")) 
+g7
+```
+
+```{r graph8, include=FALSE}
+#Crimes
+crimes <- read_excel("/Users/pedro/Documents/DataVis/SESNSP/crimen.xls")
+names(crimes)[names(crimes)=="CLAVE MARCO GEOESTADISTICO NAL"] <- "id2"
+crimes <- subset(crimes, ANO != 2017 & MODALIDAD == "HOMICIDIOS" & TIPO == "DOLOSOS" & SUBTIPO == "CON ARMA DE FUEGO")
+crimes$Murders <- rowSums(crimes[,7:18])
+crimes <- crimes[c("ENTIDAD", "ANO",  "Murders","id2")]
+crimes_agg <- crimes  %>%
+  dplyr::group_by(id2) %>%
+  dplyr::summarize(total = sum(Murders)) 
+
+df_mxstate$value <- crimes_agg$total
+g8 <- mxstate_choropleth(df_mxstate,
+                   title = "Total Murders, by state",
+                   num_colors = 1)
+g8 <- g8 + labs(x="", 
+                y="",
+                title="Firearm murders by State in Mexico",
+                subtitle="Number of Murders by Firearm 1997-2016 in Mexico: State level",
+                caption = "SESNSP (Executive Secretariat of the Public Security Council: Mexico)")
+g8 <- g8 + theme(plot.title=element_text(size=15, hjust=0.0, face="bold", colour="black", vjust=-1))
+g8 <- g8 + theme(plot.subtitle=element_text(size=10, hjust=0.0, face="italic", color="maroon"))
+g8 <- g8 + theme(plot.caption=element_text(size=10, hjust=0.0, color="black")) 
+g8
+
+```
+
+
+## Figure 1
+```{r figure 1, echo=FALSE}
+grid.arrange(gp2, gp1)
+```
+
+Since the last decade, the level of murders in Mexico has more than double. A lot of reasons have been blame as a consequence: an increase in drug trafficking activities, political fragmentation, a federal government frontal war against drugs, a cartel decapitation strategy even changes in the droop policy of Colombia. However, the illegal smuggling of firearms from the US to Mexico rarely has been named (with the exception of Oendrila Dube, David Esparza,David Shrink among other researchers that had done work in this field). In the previous graph, can be observed that the rifle production and the murders in Mexico follow a similar trend during the last years (there is a positive correlation -0.54- between them).
+
+
+## Figure 2
+```{r figure 2, echo =FALSE}
+g4
+
+```
+
+According to Dube A., Dube O., & Garc??a-Ponce (2011), the north of Mexico suffered more quickly than the rest of the country from the Federal Assault Weapons Ban lift **(FAWB)**. The previous graph show the total number of murders by State and year in the States of Mexico that have frontier with the US. There was a change in the number of murders by State and year before and after the **FAWB**. Remarkably, Chihuahua had an evident spike leaded by the Ciudad Ju??rez war between 2009 and 2011. 
+
+
+## Figure 3
+```{r figure 3, echo =FALSE}
+g1
+
+```
+
+The relationship between murders in Mexico and **FAWB**, leaded us to study the firearms industry in the US. From the previous graph, it can be observed that the production of firearms more than triple from the early 2000's over 2015, with rifles and pistols been the categories with the higher increases.
+
+
+## Figure 4
+```{r figure 4, echo =FALSE}
+g2
+```
+
+The objective of this project is to show that the increase of firearms production in the US has been driven by an increase in the demand of firearms in Mexico; particularly, by the increase of firearms smuggling from the US to Mexico. As a result is expected to argue that the US firearms industry is making heavy revenues from the illegal exports of their products (in specific Pistols and Rifles) to Mexico. To show this, we need to prove that the consumption of firearms inside the US has been steady and that the legal exports from the US to other countries are steady as well. The previous graph show that the exports have remained steady while the  imports have increased.
+
+
+## Figure 5
+```{r figure 5, echo =FALSE}
+g3
+```
+
+The number of consolidations are a signal that the profits of an industry as a whole are increasing (The Economist, Mar 26,2016): profits can be diverted into investments, for example, the acquisitions of smaller or less profitable companies. From the previous graph, firearms manufacturing licenses, there can be observed that the industry has reduced its number of players (all the firms in the industry have to tramit their licenses every three years).
+
+
+## Figure 6
+```{r figure 6, echo =FALSE}
+g6
+```
+
+With data of the NGO State Firearm Law Database, there was built and index of state tightness over firearms production and use. There can be seen that states like California, New York and Illinois hava tighter regulations than states like Texas, Arizona, Wyoming or Montana.
+
+
+## Figure 7
+```{r figure 7, echo =FALSE}
+g7
+```
+
+There is not a clear correlation pattern between firearms licenses in 2016 and number of state firearms laws between 1991 and 2016. However, the estimation was not made to account for the state population (the metrics "per capita" could be different).
+
+
+## Figure 8
+```{r figure 8, echo =FALSE}
+ g8
+```
+
+The states in Mexico with the highest level of murders by firearms are Chihuahua, Sonora (in the north) and Guerrero in the south. Let's explore which is the proportion of them caused by the U.S illegal smuggling of firearms.
+
+
+## Conclusion
+There is more research to be done to understand the magnitude of the firearms smuggling from the US to Mexico and the impact that this phenomenon has into the violence that Mexico is passing through. However, the initial exploratory data analysis shows that this situation looks like a duck, swims like a duck, and quacks like a duck .... Let's show with further research that is a duck. 
+
+##Bibliography
+Dube, A., Dube, O., & Garcia-Ponce, O. (s.f.). Cross-Border Spillover: U.S Gun Laws and Violence in Mexico. American Political Science Review, 107(3).
+
+McDougal, T., Shirk, D. A., Muggah, R., & Patterson, J. H. (2013). Border, The Way of the Gun: Estimating Firearms Traffic Across the U.S.-Mexico.
+
+Perez E., D., & Weigend, E. (2015). The Illegal flow of firearms from the United States to Mexico: a state level propensity analysis. Journal of trafficking, Organized Crime and Security, 115-125.
+
+Too much a good thing; Profits are too high. America needs a giant dose of competition. (2016, March 26). The Economist (US). Retrieved from <https://www.economist.com/news/briefing/21695385-profits-are-too-high-america-needs-giant-dose-competition-too-much-good-thing>.
+
