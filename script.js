@@ -19,7 +19,8 @@ d3.csv("merchants_state_wide.csv", function(error, data){
       d.lat2015 = +d.lat_2015
       d.lat2016 = +d.lat_2016
       d.lat2017 = +d.lat_2017
-      d.name = d.License_Name
+      d.lic_type = +d.Lic_Type_2017
+      d.name = d.License_Name;
     });
     dataset = data;
     console.log(dataset);
@@ -58,8 +59,9 @@ var svg = d3.select("body")
 
          });
 
+
 //Graph
-function createChart(d){
+function createChart(d) {
 
   //Create key
   var key = function(d) {
@@ -78,7 +80,7 @@ function createChart(d){
                    .range([0, width]);
 
         //Draw the scatter plot
-                    svg.selectAll("circle")
+                  allcircles = svg.selectAll("circle")
                       .data(dataset, key)
                       .enter()
                       .append("circle")
@@ -155,7 +157,79 @@ function createChart(d){
       .attr("y", margin.top + height - 200)
       .text("2014")
       .attr("class","text1");
-    
+  
+
+    d3.selectAll("input")
+        .on("click", function() {
+
+          var view = d3.select(this).node().value;
+
+          //Reset all to black
+          allcircles.attr("r", 5);
+
+
+          switch (view) {
+
+            case "dealer":
+
+                    allcircles.filter(function(d,i) {
+                                return d.lic_type == 1;
+                              })
+                              .attr("r", 20);
+                                        
+
+              break;
+
+
+            case "pawnbroker":
+
+              allcircles.filter(function(d,i) {
+                                return d.lic_type == 2;
+                              })
+                        .attr("r", 20);
+                        
+                        
+
+
+              break;
+
+            case "manufacturer_firearms":
+
+              allcircles.filter(function(d,i) {
+                                return d.lic_type == 7;
+                              })
+                        .attr("r", 20);
+                        
+                        
+
+
+              break;
+
+            case "manufacturer_ammunition":
+
+              console.log("hello")
+              allcircles.filter(function(d,i) {
+                                return d.lic_type == 6;
+                              })
+                        .attr("r", 20);
+
+              break;
+
+            case "All":
+            default:
+ 
+          }
+
+        });
+    };
+  
+
+
+
+
+
+
+function motion(dataset) { 
     //Motion
     d3.select("#start").on("click", function() {
           //Update scale domains
@@ -166,24 +240,8 @@ function createChart(d){
           svg.selectAll("circle")
              .data(dataset)
              .transition() //transition of place 
-              .duration(4000)
-              .ease(d3.easeLinear)
-              .on("start",function() {
-                  d3.select(this)
-                      .attr("cx", function(d,i) {
-                            return projection([d.lon2014, d.lat2014])[0];
-                                })
-                      .attr("cy", function(d,i) {
-                            return projection([d.lon2014, d.lat2014])[1];
-                                })
-                      .attr("r", 5)
-                      .style("fill", "gray")
-                      .style("stroke", "gray")
-                      .style("stroke-width", 0.25)
-                      .style("opacity", 0.75)
-              .transition() //transition of place 
-              .delay(800)
-              .duration(4000)
+             .delay(800)
+             .duration(4000)
                   .ease(d3.easeLinear)
                   .attr("cx", function(d,i) {
                     return projection([d.lon2015, d.lat2015])[0];
@@ -226,19 +284,9 @@ function createChart(d){
                   .style("stroke", "gray")
                   .style("stroke-width", 0.25)
                   .style("opacity", 0.75);
-             
-          });
-
+    
         //Update text
           svg.select("text.text1") 
-             .transition() //transition of place 
-              .duration(4000)
-              .on("start",function() {
-                d3.select(this)           
-                  .attr("x", margin.left + width - 200)
-                  .attr("y", margin.top + height - 200)
-                  .text("2014")
-                  .attr("class","text1")
                 .transition() //transition of place 
                 .delay(600)
                 .duration(4000)
@@ -260,11 +308,8 @@ function createChart(d){
                   .attr("y", margin.top + height - 200)
                   .text("2017")
                   .attr("class","text1");
-             
-          });
       
       });
-
 
       //Reset circles
       d3.select("#reset").on("click", function() {
@@ -272,34 +317,30 @@ function createChart(d){
               .data(dataset)
               .transition() //transition of place 
                .duration(500)
-               .on("start",function() {
-                  d3.select(this)
-                    .attr("cx", function(d,i) {
+               .attr("cx", function(d,i) {
                             return projection([d.lon2014, d.lat2014])[0];
                                 })
-                      .attr("cy", function(d,i) {
+               .attr("cy", function(d,i) {
                             return projection([d.lon2014, d.lat2014])[1];
                                 })
-                      .attr("r", 5)
-                      .style("fill", "gray")
-                      .style("stroke", "gray")
-                      .style("stroke-width", 0.25)
-                      .style("opacity", 0.75); 
+               .attr("r", 5)
+               .style("fill", "gray")
+               .style("stroke", "gray")
+               .style("stroke-width", 0.25)
+               .style("opacity", 0.75); 
 
-              });
 
             //Reset text
              svg.select("text.text1") 
              .transition() //transition of place 
-              .duration(4000)
-              .on("start",function() {
-                d3.select(this)           
-                  .attr("x", margin.left + width - 200)
-                  .attr("y", margin.top + height - 200)
-                  .text("2014")
-                  .attr("class","text1")
+              .duration(4000)           
+              .attr("x", margin.left + width - 200)
+              .attr("y", margin.top + height - 200)
+              .text("2014")
+              .attr("class","text1");
   
-             });
-        });      
-  
-};     
+            
+      }); 
+
+    };
+    

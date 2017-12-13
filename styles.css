@@ -72,7 +72,22 @@ p {
 				margin-left: 40px;
 			}
 
+
 button {
+
+	color: gray;
+	font-size: 18px;
+	font-family: Courier New;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    font-size: 110%;
+    margin-left: 100px;
+
+
+}
+
+
+select {
 
 
 	color: gray;
